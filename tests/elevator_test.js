@@ -7,6 +7,7 @@ const Elevator = require('../js/elevator').default
 const Person = require('../js/person').default
 
 describe('Elevator', function() {
+  const time = new Date().getHours()
   const elevator = new Elevator()
 
   afterEach(function() {
@@ -18,21 +19,29 @@ describe('Elevator', function() {
     const alexander = new Person('Alexander', floor)
     it('should bring rider to their requested floor', () => {
       elevator.addRequest(alexander, 9)
-      assert.equal(elevator.currentFloor, 9)
       assert.equal(elevator.floors, 9)
       assert.equal(elevator.stops, 2)
       assert.equal(elevator.state, 'idle')
       assert.equal(elevator.riders.length, 0)
       assert.equal(elevator.requestCount, 1)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 9)
+      }
     })
 
 
     it('should bring a rider to a floor above their current floor', () => {
       elevator.addRequest(alexander, 5)
-      assert.equal(elevator.currentFloor, 5)
       assert.equal(elevator.state, 'idle')
       assert.equal(elevator.stops, 2)
       assert.equal(elevator.floors, 5)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 5)
+      }
     })
 
     it('should bring a rider to a floor below their current floor', () => {
@@ -56,12 +65,20 @@ describe('Elevator', function() {
     it('should travel the correct number of floors', () => {
       elevator.addRequest(alexander, 33)
       assert.equal(elevator.floors, 33)
-      assert.equal(elevator.currentFloor, 33)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 33)
+      }
     })
 
     it('should end on the riders destination', () => {
       elevator.addRequest(alexander, 7)
-      assert.equal(elevator.currentFloor, 7)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 7)
+      }
     })
 
     it('should not move floors if rider requests same floor', () => {
@@ -88,12 +105,15 @@ describe('Elevator', function() {
     const cleo = new Person('Cleo', 23)
     it('drop off first person before picking up second', () => {
       elevator.addRequest(alexander, 9)
-      assert.equal(elevator.currentFloor, 9)
       elevator.addRequest(dobby, 6)
       assert.equal(elevator.stops, 4)
       assert.equal(elevator.floors, 18)
       assert.equal(elevator.requestCount, 2)
-      assert.equal(elevator.currentFloor, 6)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 6)
+      }
     })
 
     it('should bring both riders to a floor below their current floor (correct order)', () => {
@@ -101,20 +121,28 @@ describe('Elevator', function() {
       assert.equal(elevator.currentFloor, 21)
       assert.equal(elevator.requestCount, 1)
       elevator.addRequest(cleo, 16)
-      assert.equal(elevator.currentFloor, 16)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 4)
       assert.equal(elevator.floors, 48)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 16)
+      }
     })
 
     it('should bring both riders to a floor above their current floor (correct order)', () => {
       elevator.addRequest(alexander, 25)
       assert.equal(elevator.currentFloor, 25)
       elevator.addRequest(dobby, 22)
-      assert.equal(elevator.currentFloor, 22)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 4)
       assert.equal(elevator.floors, 66)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 22)
+      }
     })
 
     it('should drop off in correct order - Rider A goes up, B goes down', () => {
@@ -122,10 +150,14 @@ describe('Elevator', function() {
       assert.equal(elevator.currentFloor, 39)
       assert.equal(elevator.requestCount, 1)
       elevator.addRequest(cleo, 11)
-      assert.equal(elevator.currentFloor, 11)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 4)
       assert.equal(elevator.floors, 67)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 11)
+      }
     })
 
     it('should drop off in correct order - Rider A goes down, B goes up', () => {
@@ -133,40 +165,56 @@ describe('Elevator', function() {
       assert.equal(elevator.currentFloor, 0)
       assert.equal(elevator.requestCount, 1)
       elevator.addRequest(cleo, 26)
-      assert.equal(elevator.currentFloor, 26)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 4)
       assert.equal(elevator.floors, 86)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 26)
+      }
     })
 
     it('should only drop off B, A requests same floor', () => {
       elevator.addRequest(alexander, 4)
       assert.equal(elevator.currentFloor, 4)
       elevator.addRequest(dobby, 22)
-      assert.equal(elevator.currentFloor, 22)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 3)
       assert.equal(elevator.floors, 24)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 22)
+      }
     })
 
     it('should only drop off A, B requests same floor', () => {
       elevator.addRequest(alexander, 0)
       assert.equal(elevator.currentFloor, 0)
       elevator.addRequest(dobby, 3)
-      assert.equal(elevator.currentFloor, 3)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 3)
       assert.equal(elevator.floors, 11)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 3)
+      }
     })
 
     it('should not pick up any riders, they request same destination as current floor', () => {
       elevator.addRequest(alexander, 4)
       assert.equal(elevator.currentFloor, 4)
       elevator.addRequest(dobby, 3)
-      assert.equal(elevator.currentFloor, 3)
       assert.equal(elevator.requestCount, 2)
       assert.equal(elevator.stops, 2)
       assert.equal(elevator.floors, 5)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 3)
+      }
     })
 
     it('should have an idle state after dropping off last rider', () => {
@@ -175,4 +223,23 @@ describe('Elevator', function() {
       assert.equal(elevator.state, 'idle')
     })
   })
+
+  describe('Levels 5/6', () => {
+    const dexter = new Person('Dexter', 4)
+    const beau = new Person('Beau', 15)
+    const matilda = new Person('Matilda', 11)
+    const donald = new Person('Donald', 23)
+
+    it('should return to lobby if no riders and before 12pm', () => {
+      elevator.addRequest(dexter, 6)
+      elevator.addRequest(beau, 3)
+      if(time <= 12) {
+        assert.equal(elevator.currentFloor, 0)
+      } else {
+        assert.equal(elevator.currentFloor, 3)
+      }
+    })
+  })
 })
+
+//test person class

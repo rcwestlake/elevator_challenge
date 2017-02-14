@@ -81,7 +81,6 @@ describe('Elevator', function() {
     });
   })
 
-
   describe('Levels 3/4', () => {
     const alexander = new Person('Alexander', 4)
     const dobby = new Person('Dobby', 3)

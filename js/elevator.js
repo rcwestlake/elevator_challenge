@@ -4,6 +4,7 @@ export default class Elevator {
     this.floors = 0
     this.stops = 0
     this.requests = []
+    this.requestCount = 0
     this.riders = []
     this.state = 'idle'
   }
@@ -13,36 +14,29 @@ export default class Elevator {
       throw new Error('ERROR: please enter a valid desination')
     }
 
-    if(destination === person.currentFloor || destination < 0) return 
-
-    this.requests.push({
-                    name: person.name,
-                    currentFloor: person.currentFloor,
-                    destination })
-
-    //this conditional is temporary
-    if(this.requests.length === 1) {
-      this.moveToCurrentFloor()
-    }
+    this.requestCount++
+    this.moveToCurrentFloor(person, destination)
   }
 
-  moveToCurrentFloor() {
+  moveToCurrentFloor(person, destination) {
+    this.state = 'moving'
+    this.calcTraversedFloors(person.currentFloor)
+    this.currentFloor = person.currentFloor
+    this.increaseStops()
+    this.state = 'idle'
+    this.pickUp(person, destination)
+  }
+
+  pickUp(person, destination) {
+    if(destination === person.currentFloor || destination < 0) return
+    this.addRequestToQueue(person, destination)
     const request = this.requests[0]
-    this.calcTraversedFloors(request.currentFloor)
-    this.status = 'moving'
-    this.currentFloor = request.currentFloor
-    this.pickUp(request)
-  }
-
-  pickUp(request) {
-    this.stops++
     this.riders.push(request)
-    this.status = 'idle'
     this.moveToDestination(request)
   }
 
   moveToDestination(request) {
-    this.status = 'moving'
+    this.state = 'moving'
     this.calcTraversedFloors(request.destination)
     this.currentFloor = request.destination
     this.dropOff(request)
@@ -50,8 +44,20 @@ export default class Elevator {
 
   dropOff(request) {
     this.riders.shift()
+    this.requests.shift()
+    this.increaseStops()
+    this.state = 'idle'
+  }
+
+  addRequestToQueue(person, destination) {
+    this.requests.push({
+      name: person.name,
+      currentFloor: person.currentFloor,
+      destination })
+  }
+
+  increaseStops() {
     this.stops++
-    this.status = 'idle'
   }
 
   calcTraversedFloors(floorType) {

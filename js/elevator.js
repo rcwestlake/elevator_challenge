@@ -28,7 +28,7 @@ export default class Elevator {
   }
 
   pickUp(person, destination) {
-    if(destination === person.currentFloor || destination < 0) return
+    if(destination === person.currentFloor || destination < 0) this.checkTimeAndReturn()
     this.addRequestToQueue(person, destination)
     const request = this.requests[0]
     this.riders.push(request)
@@ -66,13 +66,12 @@ export default class Elevator {
     this.floors += traversed
   }
 
-  checkTimeAndReturn(request) {
+  checkTimeAndReturn() {
     const time = new Date().getHours()
-    //calc traversed floors and add
     if(time <= 12 && !this.riders.length) {
-      this.calcTraversedFloors(request.destination)
+      this.calcTraversedFloors(0)
       this.currentFloor = 0
-      console.log('currentFloor', this.currentFloor);
+      return
     }
   }
 
